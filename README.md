@@ -1,6 +1,6 @@
 # sysf
 
-A work-in-progress (and bad) implementation of a System F typechecker and evaluator (not started yet).
+A work-in-progress (and bad) implementation of a System F typechecker (WIP) and evaluator (not started yet).
 
 ## TODOs
 

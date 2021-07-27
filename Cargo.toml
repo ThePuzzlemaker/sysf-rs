@@ -1,0 +1,15 @@
+[package]
+name = "sysf"
+version = "0.1.0"
+edition = "2018"
+build = "build.rs"
+license = "MIT OR Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lalrpop-util = "0.19.6"
+regex = "1.5.4"
+
+[build-dependencies]
+lalrpop = "0.19.6"

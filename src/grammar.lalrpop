@@ -1,0 +1,51 @@
+#![allow(clippy::all)]
+#![allow(warnings)]
+use crate::ast::{Term, Ty};
+
+grammar;
+
+pub Term: Box<Term> = Annotation;
+
+Annotation = {
+    Lambda,
+    <expr:Annotation> ":" <ty:Type> => Box::new(Term::Ann(expr, ty))
+}
+
+Lambda = {
+    Appl,
+    "\\" <var:Var> "." <body:Lambda> => Box::new(Term::Lambda(var, body)),
+}
+
+Appl = {
+    PolyAppl,
+    <f:Appl> "$" <t:PolyAppl> => Box::new(Term::Appl(f, t)),
+}
+
+PolyAppl = {
+    Primary,
+    <body:PolyAppl> "[" <ty:Type> "]" => Box::new(Term::PolyAppl(body, ty))
+}
+
+Primary = {
+    "true" => Box::new(Term::Bool(true)),
+    "false" => Box::new(Term::Bool(false)),
+    "(" <Term> ")",
+    Var => Box::new(Term::Var(<>))
+}
+
+Var: String = <r"[a-zA-Z][a-zA-Z0-9_]*"> => <>.to_string();
+TyVar: String = <r"'[a-zA-Z][a-zA-Z0-9_]*"> => <>.to_string();
+
+pub Type: Ty = LambdaTy;
+
+LambdaTy = {
+    PrimitiveTy,
+    <v:TyVar> "=>" <b:LambdaTy> => Ty::Forall(v, Box::new(b)),
+    <i:PrimitiveTy> "->" <o:LambdaTy> => Ty::Arrow(Box::new(i), Box::new(o))
+}
+
+PrimitiveTy = {
+    "bool" => Ty::Bool,
+    <TyVar> => Ty::Var(<>),
+    "(" <Type> ")"
+}

@@ -1,6 +1,6 @@
 #![allow(clippy::all)]
 #![allow(warnings)]
-use crate::ast::{Term, Ty};
+use crate::ast::parse::{Term, Ty};
 
 grammar;
 
@@ -18,7 +18,7 @@ Lambda = {
 
 Appl = {
     PolyAppl,
-    <f:Appl> "$" <t:PolyAppl> => Box::new(Term::Appl(f, t)),
+    <f:Appl> <t:PolyAppl> => Box::new(Term::Appl(f, t)),
 }
 
 PolyAppl = {
@@ -29,6 +29,7 @@ PolyAppl = {
 Primary = {
     "true" => Box::new(Term::Bool(true)),
     "false" => Box::new(Term::Bool(false)),
+    "(" ")" => Box::new(Term::Unit),
     "(" <Term> ")",
     Var => Box::new(Term::Var(<>))
 }
@@ -46,6 +47,7 @@ LambdaTy = {
 
 PrimitiveTy = {
     "bool" => Ty::Bool,
+    "unit" => Ty::Unit,
     <TyVar> => Ty::Var(<>),
-    "(" <Type> ")"
+    "(" <Type> ")",
 }

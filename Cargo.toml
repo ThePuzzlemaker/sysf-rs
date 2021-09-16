@@ -9,8 +9,10 @@ build = "build.rs"
 [dependencies]
 lalrpop-util = "0.19.6"
 regex = "1"
-tracing-subscriber = { version = "0.2.19", optional = true }
+tracing-subscriber = { version = "0.2.13", optional = true }
 tracing = { version = "0.1.26", optional = true }
+pretty = "0.10.0"
+# derive_more = "0.99.16"
 
 [build-dependencies]
 lalrpop = "0.19.6"

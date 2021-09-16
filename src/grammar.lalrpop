@@ -23,7 +23,7 @@ Appl = {
 
 PolyAppl = {
     Primary,
-    <body:PolyAppl> "[" <ty:Type> "]" => Box::new(Term::PolyAppl(body, ty))
+    <body:PolyAppl> "[" <ty:Type> "]" => Box::new(Term::TypeAppl(body, ty))
 }
 
 Primary = {

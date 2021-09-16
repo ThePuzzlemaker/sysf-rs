@@ -63,22 +63,22 @@ impl TyCtxt {
     }
 
     #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
-    pub fn get_term_var_mut(&mut self, idx: usize) -> Option<&mut Ty> {
+    pub fn get_term_var_idx(&mut self, idx: usize) -> Option<usize> {
         trace!("ctx/get_term_var_mut/enter");
         let res = self
             .arr
-            .iter_mut()
-            .rev()
+            .iter()
             .enumerate()
+            .rev()
             .filter_map(|(idx, x)| {
                 if let TyCtxtEntry::TermVar(ty) = x {
-                    Some(ty)
+                    Some(idx)
                 } else {
                     None
                 }
             })
             .nth(idx);
-        trace!(?res, "ctx/get_term_var_mut/leave");
+        trace!(?res, "ctx/get_term_var_idx/leave");
         res
     }
 
@@ -105,13 +105,13 @@ impl TyCtxt {
         res
     }
 
-    #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
-    pub fn contains_unsolved_evar(&self, idx: usize) -> bool {
-        trace!("ctx/contains_unsolved_evar/enter");
-        let res = self.arr.contains(&TyCtxtEntry::UnsolvedExst(idx));
-        trace!(?res, "ctx/contains_unsolved_evar/leave");
-        res
-    }
+    // #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
+    // pub fn contains_unsolved_evar(&self, idx: usize) -> bool {
+    //     trace!("ctx/contains_unsolved_evar/enter");
+    //     let res = self.arr.contains(&TyCtxtEntry::UnsolvedExst(idx));
+    //     trace!(?res, "ctx/contains_unsolved_evar/leave");
+    //     res
+    // }
 
     #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
     pub fn contains_evar(&self, idx: usize) -> bool {
@@ -157,6 +157,18 @@ impl TyCtxt {
         self.arr.truncate(uvar_idx);
 
         trace!("ctx/drop_after_uvar/leave: ok");
+        Some(())
+    }
+
+    #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
+    pub fn drop_after_term_var(&mut self, idx: usize) -> Option<()> {
+        trace!("ctx/drop_after_term_var/enter");
+        let term_var_idx = self.get_term_var_idx(idx)?;
+
+        // Drop everything after the term var.
+        self.arr.truncate(term_var_idx);
+
+        trace!("ctx/drop_after_term_var/leave: ok");
         Some(())
     }
 
@@ -294,5 +306,11 @@ impl<'a> TyCtxtView<'a> {
         });
         trace!(?res, "ctxview/contains_evar/leave");
         res
+    }
+}
+
+impl<'a> From<&'a TyCtxt> for TyCtxtView<'a> {
+    fn from(ctx: &'a TyCtxt) -> Self {
+        Self { arr: &ctx.arr }
     }
 }

@@ -10,7 +10,7 @@ pub enum Term {
     Bool(bool),
     Var(String),
     Ann(Box<Term>, Ty),
-    PolyAppl(Box<Term>, Ty),
+    TypeAppl(Box<Term>, Ty),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -51,8 +51,8 @@ impl Term {
             Term::Ann(term, ty) => {
                 core::Term::Ann(Box::new(term.into_core_(ctx)?), ty.into_core()?)
             }
-            Term::PolyAppl(term, ty) => {
-                core::Term::PolyAppl(Box::new(term.into_core_(ctx)?), ty.into_core()?)
+            Term::TypeAppl(term, ty) => {
+                core::Term::TypeAppl(Box::new(term.into_core_(ctx)?), ty.into_core()?)
             }
         })
     }

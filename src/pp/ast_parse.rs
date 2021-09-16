@@ -35,7 +35,7 @@ pub fn pp_parse_term<'a>(term: Term, arena: &'a Arena<'a>) -> Builder<'a> {
                 arena.softline(),
             )
             .parens(),
-        Term::PolyAppl(term, ty) => arena
+        Term::TypeAppl(term, ty) => arena
             .intersperse(
                 [
                     arena.text("[]"),

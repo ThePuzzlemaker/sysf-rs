@@ -35,7 +35,7 @@ pub fn pp_core_term<'a>(term: Term, arena: &'a Arena<'a>) -> Builder<'a> {
                 arena.softline(),
             )
             .parens(),
-        Term::PolyAppl(term, ty) => arena
+        Term::TypeAppl(term, ty) => arena
             .intersperse(
                 [
                     arena.text("[]"),
@@ -73,6 +73,6 @@ pub fn pp_core_ty<'a>(ty: Ty, arena: &'a Arena<'a>) -> Builder<'a> {
                 arena.softline(),
             )
             .parens(),
-        Ty::ExstVar(idx) => arena.text(format!("exst:{}", idx)),
+        Ty::ExstVar(idx) => arena.text(format!("'__exst{}", idx)),
     }
 }

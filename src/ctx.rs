@@ -105,14 +105,6 @@ impl TyCtxt {
         res
     }
 
-    // #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
-    // pub fn contains_unsolved_evar(&self, idx: usize) -> bool {
-    //     trace!("ctx/contains_unsolved_evar/enter");
-    //     let res = self.arr.contains(&TyCtxtEntry::UnsolvedExst(idx));
-    //     trace!(?res, "ctx/contains_unsolved_evar/leave");
-    //     res
-    // }
-
     #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
     pub fn contains_evar(&self, idx: usize) -> bool {
         trace!("ctx/contains_evar/enter");
@@ -305,6 +297,34 @@ impl<'a> TyCtxtView<'a> {
             _ => false,
         });
         trace!(?res, "ctxview/contains_evar/leave");
+        res
+    }
+
+    #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
+    pub fn contains_uvar(&self, idx: usize) -> bool {
+        trace!("ctxview/contains_uvar/enter");
+        let res = self.get_uvar(idx).is_some();
+        trace!(?res, "ctxview/contains_uvar/leave");
+        res
+    }
+
+    #[cfg_attr(feature = "trace", instrument(level = "trace", skip(self)))]
+    pub fn get_uvar(&self, idx: usize) -> Option<usize> {
+        trace!("ctxview/get_uvar/enter");
+        let res = self
+            .arr
+            .iter()
+            .rev()
+            .enumerate()
+            .filter_map(|(idx, x)| {
+                if x == &TyCtxtEntry::Uvar {
+                    Some(idx)
+                } else {
+                    None
+                }
+            })
+            .nth(idx);
+        trace!(?res, "ctxview/get_uvar/leave");
         res
     }
 }

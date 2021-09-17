@@ -122,7 +122,7 @@ impl Ty {
         let res = match self {
             Ty::Bool | Ty::Unit | Ty::Var(_) => false,
             Ty::ExstVar(eidx) => idx == *eidx,
-            Ty::Arrow(inp, out) => inp.contains_evar(idx) && out.contains_evar(idx),
+            Ty::Arrow(inp, out) => inp.contains_evar(idx) || out.contains_evar(idx),
             Ty::Forall(body) => body.contains_evar(idx),
         };
         trace!(%res, "ty/contains_evar/leave");
@@ -135,7 +135,7 @@ impl Ty {
         let res = match self {
             Ty::Bool | Ty::Unit | Ty::Var(_) => false,
             Ty::ExstVar(eidx) => evars.contains_key(eidx),
-            Ty::Arrow(inp, out) => inp.contains_evars(evars) && out.contains_evars(evars),
+            Ty::Arrow(inp, out) => inp.contains_evars(evars) || out.contains_evars(evars),
             Ty::Forall(body) => body.contains_evars(evars),
         };
         trace!(%res, "ty/contains_evars/leave");
@@ -147,7 +147,8 @@ impl Ty {
         trace!("ty/is_mono_wellformed_in/enter");
         let res = match self {
             Ty::Bool | Ty::Unit => true,
-            Ty::Var(_) | Ty::Forall(_) => false,
+            Ty::Var(idx) => ctx.contains_uvar(*idx),
+            Ty::Forall(_) => false,
             Ty::ExstVar(eidx) => ctx.contains_evar(*eidx),
             Ty::Arrow(inp, out) => inp.is_mono_wellformed_in(ctx) && out.is_mono_wellformed_in(ctx),
         };

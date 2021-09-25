@@ -65,14 +65,6 @@ pub fn infer(ctx: &mut TyCtxt, term: &Term) -> Option<Ty> {
 #[cfg_attr(feature = "trace", instrument(level = "trace", skip(ctx)))]
 pub fn check(ctx: &mut TyCtxt, term: &Term, ty: &Ty) -> Option<()> {
     trace!("check/enter");
-    // Sub
-    if let Some(tya) = infer(ctx, term) {
-        let tya = tya.subst_ctx(ctx);
-        let tyb = ty.clone().subst_ctx(ctx);
-        if subtype(ctx, &tya, &tyb).is_some() {
-            return Some(());
-        }
-    }
 
     match (term, ty) {
         // 1I; BoolI (not in paper)
@@ -89,9 +81,12 @@ pub fn check(ctx: &mut TyCtxt, term: &Term, ty: &Ty) -> Option<()> {
             check(ctx, &*body, &*out)?;
             ctx.drop_after_term_var(0);
         }
+        // Sub
         _ => {
-            trace!("check/leave: not checkable");
-            return None;
+            let tya = infer(ctx, term)?;
+            let tya = tya.subst_ctx(ctx);
+            let tyb = ty.clone().subst_ctx(ctx);
+            subtype(ctx, &tya, &tyb)?;
         }
     }
     trace!("check/leave: ok");

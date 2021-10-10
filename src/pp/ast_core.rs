@@ -1,9 +1,12 @@
 use crate::ast::core::{Term, Ty};
-use pretty::{Arena, DocAllocator, DocBuilder};
+use pretty::{DocAllocator, DocBuilder};
 
-type Builder<'a> = DocBuilder<'a, Arena<'a>, ()>;
+type Builder<'a, A> = DocBuilder<'a, A, ()>;
 
-pub fn pp_core_term<'a>(term: Term, arena: &'a Arena<'a>) -> Builder<'a> {
+pub fn pp_core_term<'a, A: DocAllocator<'a, ()>>(term: Term, arena: &'a A) -> Builder<'a, A>
+where
+    <A as DocAllocator<'a, ()>>::Doc: Clone,
+{
     match term {
         Term::Var(idx) => arena.text(format!("{}", idx)),
         Term::Bool(b) => arena.text(format!("{}", b)),
@@ -48,7 +51,10 @@ pub fn pp_core_term<'a>(term: Term, arena: &'a Arena<'a>) -> Builder<'a> {
     }
 }
 
-pub fn pp_core_ty<'a>(ty: Ty, arena: &'a Arena<'a>) -> Builder<'a> {
+pub fn pp_core_ty<'a, A: DocAllocator<'a, ()>>(ty: Ty, arena: &'a A) -> Builder<'a, A>
+where
+    <A as DocAllocator<'a, ()>>::Doc: Clone,
+{
     match ty {
         Ty::Bool => arena.text("bool"),
         Ty::Unit => arena.text("unit"),

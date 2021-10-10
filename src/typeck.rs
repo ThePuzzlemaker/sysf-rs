@@ -1,5 +1,5 @@
 use crate::ast::core::{Term, Ty};
-use crate::ctx::{TyCtxt, TyCtxtEntry};
+use crate::ctx::TyCtxt;
 use subtyping::subtype;
 
 use crate::trace;
@@ -52,10 +52,6 @@ pub fn infer(ctx: &mut TyCtxt, term: &Term) -> Option<Ty> {
                 return None;
             }
             fty.subst_uvar0(ty)
-        }
-        _ => {
-            trace!("infer/leave: not inferrable");
-            return None;
         }
     };
     trace!(?res, "infer/leave: ok");

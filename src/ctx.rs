@@ -4,7 +4,7 @@ use crate::trace;
 #[cfg(feature = "trace")]
 use tracing::instrument;
 
-use crate::ast::core::{Term, Ty};
+use crate::ast::core::Ty;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TyCtxtEntry {
@@ -49,8 +49,7 @@ impl TyCtxt {
             .arr
             .iter()
             .rev()
-            .enumerate()
-            .filter_map(|(idx, x)| {
+            .filter_map(|x| {
                 if let TyCtxtEntry::TermVar(ty) = x {
                     Some(ty)
                 } else {
@@ -71,7 +70,7 @@ impl TyCtxt {
             .enumerate()
             .rev()
             .filter_map(|(idx, x)| {
-                if let TyCtxtEntry::TermVar(ty) = x {
+                if let TyCtxtEntry::TermVar(_) = x {
                     Some(idx)
                 } else {
                     None

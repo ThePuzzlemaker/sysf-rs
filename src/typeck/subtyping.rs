@@ -1,5 +1,5 @@
-use crate::ast::core::{Term, Ty};
-use crate::ctx::{TyCtxt, TyCtxtEntry};
+use crate::ast::core::Ty;
+use crate::ctx::TyCtxt;
 
 use crate::trace;
 #[cfg(feature = "trace")]

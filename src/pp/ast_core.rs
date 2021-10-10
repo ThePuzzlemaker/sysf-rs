@@ -1,5 +1,5 @@
 use crate::ast::core::{Term, Ty};
-use pretty::{Arena, BuildDoc, DocAllocator, DocBuilder};
+use pretty::{Arena, DocAllocator, DocBuilder};
 
 type Builder<'a> = DocBuilder<'a, Arena<'a>, ()>;
 

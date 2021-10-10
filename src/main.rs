@@ -1,28 +1,9 @@
-#![allow(unused)]
+#![warn(clippy::pedantic)]
 
-mod ast;
-mod ctx;
-mod grammar;
-mod pp;
-mod typeck;
+use std::io::{self, prelude::*};
 
-use std::{
-    collections::HashMap,
-    io::{self, prelude::*},
-};
-
-use ast::parse::{Term, Ty};
 use ctx::TyCtxt;
-
-#[macro_export]
-macro_rules! trace {
-    ($($tt:tt)*) => {
-        #[cfg(feature = "trace")]
-        {
-            ::tracing::trace!($($tt)*)
-        }
-    };
-}
+use sysf_rs::{ctx, grammar, pp, typeck};
 
 // fn builtins() -> HashMap<String, Option<Ty>> {
 //     let mut parser = grammar::TypeParser::new();
@@ -42,7 +23,7 @@ fn main() {
         tracing_subscriber::fmt()
             .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
             // .compact()
-            .pretty()
+            // .pretty()
             .init();
     }
     /*let stdin = std::io::stdin();
@@ -68,9 +49,9 @@ fn main() {
         // ctx.clear();
     }*/
 
-    let mut stdin = io::stdin();
-    let mut stdout = io::stdout();
-    let mut parser = grammar::TermParser::new();
+    let stdin = io::stdin();
+    let stdout = io::stdout();
+    let parser = grammar::TermParser::new();
     let arena = pretty::Arena::new();
     let mut ctx = TyCtxt::default();
 
